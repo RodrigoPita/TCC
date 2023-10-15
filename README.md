@@ -16,7 +16,9 @@ As músicas usadas para se familiarizar com o código foram:
 Delas foram usados os segundos iniciais, apenas instrumental, para ajudar o reconhecedor. Apenas com essas duas músicas já foi possível notar uma diferença de comportamento, onde a primeira, além de ser mais ruidosa, é tocada primariamente no violão e apresenta notas contantes independentes do acorde tocado, enquanto a segunda é exclusivamente tocada num piano, com um som captado de forma mais limpa. 
 
 ### Segunda bateria de testes
-_ToDo_
+Mantidas as duas músicas da primeira bateria. O foco dos testes nesse momento foi de não só comparar as músicas, mas também cada versão de cromagrama gerado (STFT, CQT, IIR) juntamente com os procedimentos de reconhecimento de acordes (Template, HMM). Os resultados mostraram que para a primeira música (Wonderwall), a melhor combinação de parâmetros foi a do cromagrama baseado em IIR com o procedimento HMM, já para a segunda (Someone You Loved), a melhor combinação se deu pelo cromagrama baseado em CQT com o procedimento HMM. 
+
+Se baseando apenas nestes testes, pode-se afirmar que o procedimento HMM se destaca em relação ao Template, como era de se esperar, devido a sua complexidade maior. Quanto aos cromagramas, pode-se concluir que eles dependem a perfomance de cada um dependerá das características particulares da música, seja em relação ao ruído, instrumento, forma de tocar, entre outras possibilidades.
 
 ## Alterar o Código
 _ToDo_

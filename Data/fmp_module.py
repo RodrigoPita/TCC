@@ -635,7 +635,7 @@ def viterbi_log_likelihood(A, C, B_O):
 
 # Feature Extraction
 
-def compute_X_dict(song_selected, version='STFT', details=True):
+def compute_X_dict(song_dict, song_selected, version='STFT', details=True):
     X_dict = {}
     Fs_X_dict = {}
     ann_dict = {}
@@ -766,3 +766,52 @@ def experiment_chord_recognition(song_selected, song_dict, X_dict, ann_dict,
         result_F_Tem_dict[s] = np.copy(result_F_Tem)
         result_F_HMM_dict[s] = np.copy(result_F_HMM)    
     return result_F_Tem_dict, result_F_HMM_dict
+
+# Plot Functions
+
+def plot_hmm_likelihood_matrix(fn_wav, fn_ann, color_ann, chord_labels, version='STFT'):
+    """
+    Helper function to plot the observation sequence and the likelihood matrix of a given .wav file.
+    
+    Args:
+        fn_wav (str): Filenname of WAV
+        fn_ann (str): Filename of segment-based chord annotation
+        chord_labels (list): List of chord labels
+        color_ann: Color for annotations
+        version (str): Technique used for front-end decomposition ('STFT', 'IIR', 'CQT') (Default value = 'STFT')
+    """
+    N = 4096
+    H = 1024
+    X, Fs_X, x, Fs, x_dur = libfmp.c5.compute_chromagram_from_filename(fn_wav, N=N, H=H, gamma=0.1, version=version)
+
+    N_X = X.shape[1]
+
+    # Chord recogntion
+    chord_sim, chord_max = libfmp.c5.chord_recognition_template(X, norm_sim='1')
+
+    # Annotations
+    ann_matrix, ann_frame, ann_seg_frame, ann_seg_ind, ann_seg_sec = \
+        libfmp.c5.convert_chord_ann_matrix(fn_ann, chord_labels, Fs=Fs_X, N=N_X, last=True)
+    #P, R, F, TP, FP, FN = libfmp.c5.compute_eval_measures(ann_matrix, chord_max)
+
+    cmap = libfmp.b.compressed_gray_cmap(alpha=1, reverse=False)
+    fig, ax = plt.subplots(3, 2, gridspec_kw={'width_ratios': [1, 0.03], 
+                                              'height_ratios': [1.5, 3, 0.2]}, figsize=(9, 7))
+
+    libfmp.b.plot_chromagram(X, ax=[ax[0, 0], ax[0, 1]], Fs=Fs_X, clim=[0, 1], xlabel='',
+                             title='Observation sequence (%s-based chromagram with feature rate = %0.1f Hz)' % (version, Fs_X))
+    libfmp.b.plot_segments_overlay(ann_seg_sec, ax=ax[0, 0], time_max=x_dur,
+                                   print_labels=False, colors=color_ann, alpha=0.1)
+
+    libfmp.b.plot_matrix(chord_sim, ax=[ax[1, 0], ax[1, 1]], Fs=Fs_X, clim=[0, np.max(chord_sim)],
+                         title='Likelihood matrix (time–chord representation)',
+                         ylabel='Chord', xlabel='')
+    ax[1, 0].set_yticks(np.arange(len(chord_labels)))
+    ax[1, 0].set_yticklabels(chord_labels)
+    libfmp.b.plot_segments_overlay(ann_seg_sec, ax=ax[1, 0], time_max=x_dur,
+                                   print_labels=False, colors=color_ann, alpha=0.1)
+
+    libfmp.b.plot_segments(ann_seg_sec, ax=ax[2, 0], time_max=x_dur, time_label='Time (seconds)',
+                           colors=color_ann,  alpha=0.3)
+    ax[2,1].axis('off')
+    plt.tight_layout()
