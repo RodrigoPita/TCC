@@ -20,5 +20,15 @@ Mantidas as duas músicas da primeira bateria. O foco dos testes nesse momento f
 
 Se baseando apenas nestes testes, pode-se afirmar que o procedimento HMM se destaca em relação ao Template, como era de se esperar, devido a sua complexidade maior. Quanto aos cromagramas, pode-se concluir que eles dependem a perfomance de cada um dependerá das características particulares da música, seja em relação ao ruído, instrumento, forma de tocar, entre outras possibilidades.
 
+### Terceira bateria de testes
+Agora a música analisada foi:
+- Carol Pita - Um Cafuné E Um Violão
+
+Essa música apresenta uma progressão de acordes não usual, além de ter uma mudança de comportamento da primeira para a segunda parte, por esse motivo, foi dividida em duas faixas para fins de comparação:
+1. Parte 1: Apresenta um estilo mais _staccato_
+2. Parte 2: Altera para um harpejo, tendendo ao _legato_
+
+Os testes mostram novamente uma performance superior do cromagrama baseado em CQT e que as formas de tocar praticamente não afetaram o resultado do reconhecimento. 
+
 ## Alterar o Código
 _ToDo_
