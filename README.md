@@ -30,5 +30,17 @@ Essa música apresenta uma progressão de acordes não usual, além de ter uma m
 
 Os testes mostram novamente uma performance superior do cromagrama baseado em CQT e que as formas de tocar praticamente não afetaram o resultado do reconhecimento. 
 
+### Quarta bateria de testes
+Para esta leva de testes, foram analisadas sete novas músicas:
+1. Franz Ferdinand - Take Me Out
+2. Stevie Ray Vaughan - Pride And Joy
+3. Elton John - Your Song
+4. Billie Eilish - everything i wanted
+5. Paul McCartney - Maybe I'm Amazed
+6. Chico Buarque - Teresinha
+7. The Animals - House Of The Rising Sun
+
+Essas músicas servem para ajudar no julgamento dos limites do algoritmo sem que as matrizes de transição e probabilidade de emissão sejam alteradas. 
+
 ## Alterar o Código
 _ToDo_

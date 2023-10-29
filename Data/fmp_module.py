@@ -733,7 +733,7 @@ def plot_statistics(para_list, song_dict, song_selected, result_dict, ax,
     ax.plot(para_list, compute_mean_result(result_dict, song_selected), color='k', 
             linestyle='-',linewidth='2', label='Mean')
     if legend==True:
-        ax.legend(loc='upper right')
+        ax.legend(loc='upper right', fontsize='6')
     ax.set_title(title)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
