@@ -19,6 +19,8 @@ import libfmp.c5
 from libfmp.c5 import get_chord_labels
 import libfmp.c7
 
+LEGEND_COLORS = ['r', 'b', 'c', 'g', 'm', 'y', 'k']
+
 def compute_chromagram_from_filename(fn_wav, Fs=22050, N=4096, H=2048, gamma=None, version='STFT', norm='2'):
     """Compute chromagram for WAV file specified by filename
 
@@ -815,3 +817,42 @@ def plot_hmm_likelihood_matrix(fn_wav, fn_ann, color_ann, chord_labels, version=
                            colors=color_ann,  alpha=0.3)
     ax[2,1].axis('off')
     plt.tight_layout()
+
+def get_chromagrams(song_selected, song_dict, Fs_X_dict_STFT, X_dict_STFT, Fs_X_dict_CQT, X_dict_CQT, Fs_X_dict_IIR, X_dict_IIR, cmap='gray_r'):
+    '''Get chromagrams of the selected songs'''
+    for s in song_selected:
+        fig, ax = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 1, 1], 
+                                              'height_ratios': [2]}, figsize=(10, 2.5))
+        title = '%s, STFT' % (song_dict[s][0])
+        libfmp.b.plot_chromagram(X_dict_STFT[s], Fs=Fs_X_dict_STFT[s], ax=[ax[0]],  
+                             chroma_yticks=[0, 4, 7, 11], clim=[0, 1], cmap=cmap,
+                             title=title, ylabel='Chroma', colorbar=True, xlim=[0, 12])
+
+        title = '%s, CQT' % (song_dict[s][0])
+        libfmp.b.plot_chromagram(X_dict_CQT[s], Fs=Fs_X_dict_CQT[s], ax=[ax[1]],  
+                             chroma_yticks=[0, 4, 7, 11], clim=[0, 1], cmap=cmap,
+                             title=title, ylabel='Chroma', colorbar=True, xlim=[0, 12])  
+
+        title = '%s, IIR' % (song_dict[s][0])
+        libfmp.b.plot_chromagram(X_dict_IIR[s], Fs=Fs_X_dict_IIR[s], ax=[ax[2]],  
+                             chroma_yticks=[0, 4, 7, 11], clim=[0, 1], cmap=cmap,
+                             title=title, ylabel='Chroma', colorbar=True, xlim=[0, 12])      
+        plt.tight_layout()
+
+# Helper Functions
+def get_files(input_file, path):
+    '''Reads the input variables and returns a list'''
+    with open(input_file, 'r') as f:
+        content = f.read()
+        list = content.split('\n')
+    return [path + item for item in list]
+
+def get_name_list(audio_list):
+    '''Returns the name of an audio from the name of the file'''
+    return [element[element.index('- ')+2:element.index('.wav')] for element in audio_list]
+
+def get_song_dict(name_list, audio_list, label_list):
+    '''Creates a song dict from the input parameters'''
+    n = len(name_list)
+    return {i: [name_list[i], LEGEND_COLORS[i], audio_list[i], label_list[i]] for i in range(n)}
+
