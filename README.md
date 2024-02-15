@@ -42,5 +42,37 @@ Para esta leva de testes, foram analisadas sete novas músicas:
 
 Essas músicas servem para ajudar no julgamento dos limites do algoritmo sem que as matrizes de transição e probabilidade de emissão sejam alteradas. 
 
-## Alterar o Código
-_ToDo_
+### Quinta bateria de testes
+Mais uma leva de sete músicas analisada:
+1. Daniel Caesar & H.E.R. - Best Part
+2. Israel IZ Kamakawiwo ole - Somewhere over the Rainbow
+3. Shawn Mendes - Stitches
+4. Charlie Puth - Attention
+5. Bruno Mars - When I Was Your Man
+6. Maroon 5 - Sunday Morning
+7. Coldplay - The Scientist
+
+### Sexta bateria de testes
+Última leva inicial de testes, com o intuito de extrair imagens de espectrogramas, cromagras e matrizes de transição para enriquecer o projeto.
+
+## Testes MPB
+
+### Mudança de matriz de transição
+A primeira grande alteração para os testes em músicas da MPB é a alteração da Matriz de Transição. A matriz inicial era uma matriz uniforme e foi alterada para uma matriz tirada gerada a partir do Projeto MPB, resultado de uma análise de 550 músicas. 
+
+Os testes dessa etapa visam comparar os resultados da matriz uniforme com a matriz alterada e ver o comportamento do reconhecimento com as seguintes músicas da MPB (não usadas na geração da matriz de transição):
+
+1. Caetano Veloso - Comeu
+2. Caetano Veloso - Deixa Sangrar
+3. Chico Buarque - Ate Segunda-Feira
+4. Chico Buarque - Juca
+5. Ivan Lins - Atras Poeira
+6. Ivan Lins - Comecar De Novo
+7. Tom Jobim - As Praias Desertas
+8. Tom Jobim - Aula de Matematica
+ 
+ 
+ 
+ 
+ 
+ 

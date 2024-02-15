@@ -668,13 +668,14 @@ def compute_X_dict(song_dict, song_selected, version='STFT', details=True):
 
 # Chord Recognition Procedures
 
-def chord_recognition_all(X, ann_matrix, p=0.15, filt_len=None, filt_type='mean'):
+def chord_recognition_all(X, ann_matrix, A=None, p=0.15, filt_len=None, filt_type='mean'):
     """Conduct template- and HMM-based chord recognition and evaluates the approaches
 
     Notebook: C5/C5S3_ChordRec_Beatles.ipynb
 
     Args:
         X (np.ndarray): Chromagram
+        A (pd.Dataframe): Transition Matrix
         ann_matrix (np.ndarray): Reference annotation as given as time-chord binary matrix
         p (float): Self-transition probability used for HMM (Default value = 0.15)
         filt_len (int): Filter length used for prefilitering (Default value = None)
@@ -696,7 +697,10 @@ def chord_recognition_all(X, ann_matrix, p=0.15, filt_len=None, filt_type='mean'
     chord_sim, chord_Tem = libfmp.c5.chord_recognition_template(X, norm_sim='1')
     result_Tem = libfmp.c5.compute_eval_measures(ann_matrix, chord_Tem)
     # HMM-based chord recogntion
-    A = libfmp.c5.uniform_transition_matrix(p=p)
+    if A is None: A = libfmp.c5.uniform_transition_matrix(p=p)
+    else: 
+        A = edit_diagonal(A, p)
+        A = A.to_numpy()
     C = 1 / 24 * np.ones((1, 24))
     B_O = chord_sim
     chord_HMM, _, _, _ = libfmp.c5.viterbi_log_likelihood(A, C, B_O)
@@ -856,3 +860,30 @@ def get_song_dict(name_list, audio_list, label_list):
     n = len(name_list)
     return {i: [name_list[i], LEGEND_COLORS[i], audio_list[i], label_list[i]] for i in range(n)}
 
+def edit_diagonal(df, valor_diagonal):
+    n = df.shape[0]  # Número de linhas (e colunas, assumindo uma matriz quadrada)
+    nova_df = df.copy().astype(float)  # Cria uma cópia para manipulação
+    
+    for i in range(n):
+        # Ajusta o valor na diagonal
+        nova_df.iat[i, i] = valor_diagonal
+        
+        # Calcula a soma dos outros elementos da linha
+        soma_excluindo_diagonal = 1 - valor_diagonal
+        
+        # Calcula a soma atual dos elementos não diagonais
+        soma_atual = nova_df.iloc[i].sum() - valor_diagonal
+        
+        if soma_atual == 0:
+            # Se a soma atual é 0 (após colocar o valor_diagonal), evita divisão por zero
+            # Distribui o valor restante uniformemente entre os elementos não diagonais
+            for j in range(n):
+                if i != j:
+                    nova_df.iat[i, j] = soma_excluindo_diagonal / (n - 1)
+        else:
+            # Ajusta os valores para que a soma da linha seja 1
+            for j in range(n):
+                if i != j:
+                    nova_df.iat[i, j] *= soma_excluindo_diagonal / soma_atual
+
+    return nova_df

@@ -1,0 +1,6 @@
+comeu.csv
+as_praias_desertas.csv
+ate_segunda_feira.csv
+juca.csv
+atras_poeira.csv
+comecar_de_novo.csv
