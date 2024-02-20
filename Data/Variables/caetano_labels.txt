@@ -1,0 +1,2 @@
+comeu.csv
+deixa_sangrar.csv

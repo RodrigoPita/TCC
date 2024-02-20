@@ -861,6 +861,7 @@ def get_song_dict(name_list, audio_list, label_list):
     return {i: [name_list[i], LEGEND_COLORS[i], audio_list[i], label_list[i]] for i in range(n)}
 
 def edit_diagonal(df, valor_diagonal):
+    '''Edits the transition matrix diagonal maintaining the proportion of the other cells and the row sum = 1 '''
     n = df.shape[0]  # Número de linhas (e colunas, assumindo uma matriz quadrada)
     nova_df = df.copy().astype(float)  # Cria uma cópia para manipulação
     
@@ -887,3 +888,21 @@ def edit_diagonal(df, valor_diagonal):
                     nova_df.iat[i, j] *= soma_excluindo_diagonal / soma_atual
 
     return nova_df
+
+def find_best_p(X_dict, ann_dict, df, print_list=False):
+    '''Finds the best self transition probability p according to the F-measure'''
+    min_p = 0
+    max_p = 100
+    step = 2
+    p_values = [p/100 for p in range(min_p, max_p+step, step)]
+    outputs_by_p = {}
+    p_F_measures = []
+    for p in p_values:
+        output = chord_recognition_all(X_dict, ann_dict, df, p=p)
+        outputs_by_p[p] = output
+        _, _, F, _, _, _ = output[1]
+        p_F_measures.append((p, F))
+    sorted_list = sorted(p_F_measures, key=lambda x: x[1], reverse=True)
+    if print_list: print(sorted_list)
+    return sorted_list[0], [x[0] for x in sorted_list if x[1] == sorted_list[0][1]]
+

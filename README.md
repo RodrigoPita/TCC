@@ -71,8 +71,7 @@ Os testes dessa etapa visam comparar os resultados da matriz uniforme com a matr
 7. Tom Jobim - As Praias Desertas
 8. Tom Jobim - Aula de Matematica
  
- 
- 
+Os testes serão separados por Artista e ao final é calculado qual a melhor probabilidade _p_ de transição ao mesmo estado para colocar na matriz de transição alterada.
  
  
  
