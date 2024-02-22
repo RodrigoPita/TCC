@@ -471,7 +471,7 @@ def viterbi_log(A, C, B, O):
 # HMM-Based Chord Recognition
 
 def plot_transition_matrix(A, log=True, ax=None, figsize=(6, 5), title='',
-                           xlabel='State (chord label)', ylabel='State (chord label)',
+                           xlabel='Estado', ylabel='Estado',
                            cmap='gray_r', quadrant=False):
     """Plot a transition matrix for 24 chord models (12 major and 12 minor triads)
 
@@ -500,11 +500,11 @@ def plot_transition_matrix(A, log=True, ax=None, figsize=(6, 5), title='',
 
     if log is True:
         A_plot = np.log(A)
-        cbar_label = 'Log probability'
+        cbar_label = 'Log probabilidade'
         clim = [-6, 0]
     else:
         A_plot = A
-        cbar_label = 'Probability'
+        cbar_label = 'Probabilidade'
         clim = [0, 1]
     im = ax[0].imshow(A_plot, origin='lower', aspect='equal', cmap=cmap, interpolation='nearest')
     im.set_clim(clim)
@@ -713,7 +713,7 @@ def plot_chord_recognition_result(ann_matrix, result, chord_matrix, chord_labels
     method='HMM' 
     title = title + ' (TP=%d, FP=%d, FN=%d, P=%.3f, R=%.3f, F=%.3f)' % (TP, FP, FN, P, R, F)
     fig, ax, im = libfmp.c5.plot_matrix_chord_eval(ann_matrix, chord_matrix, Fs=Fs_X, figsize=figsize,
-                         title=title, ylabel='Chord', xlabel='Time (frames)', chord_labels=chord_labels)
+                         title=title, ylabel='Acorde', xlabel='Tempo (quadros)', chord_labels=chord_labels)
     if xlim is not None:
         plt.xlim(xlim)
     plt.tight_layout()
@@ -830,17 +830,17 @@ def get_chromagrams(song_selected, song_dict, Fs_X_dict_STFT, X_dict_STFT, Fs_X_
         title = '%s, STFT' % (song_dict[s][0])
         libfmp.b.plot_chromagram(X_dict_STFT[s], Fs=Fs_X_dict_STFT[s], ax=[ax[0]],  
                              chroma_yticks=[0, 4, 7, 11], clim=[0, 1], cmap=cmap,
-                             title=title, ylabel='Chroma', colorbar=True, xlim=[0, 12])
+                             title=title, ylabel='Croma', xlabel='Tempo (segundos)', colorbar=True, xlim=[0, 12])
 
         title = '%s, CQT' % (song_dict[s][0])
         libfmp.b.plot_chromagram(X_dict_CQT[s], Fs=Fs_X_dict_CQT[s], ax=[ax[1]],  
                              chroma_yticks=[0, 4, 7, 11], clim=[0, 1], cmap=cmap,
-                             title=title, ylabel='Chroma', colorbar=True, xlim=[0, 12])  
+                             title=title, ylabel='Croma', xlabel='Tempo (segundos)', colorbar=True, xlim=[0, 12])  
 
         title = '%s, IIR' % (song_dict[s][0])
         libfmp.b.plot_chromagram(X_dict_IIR[s], Fs=Fs_X_dict_IIR[s], ax=[ax[2]],  
                              chroma_yticks=[0, 4, 7, 11], clim=[0, 1], cmap=cmap,
-                             title=title, ylabel='Chroma', colorbar=True, xlim=[0, 12])      
+                             title=title, ylabel='Croma', xlabel='Tempo (segundos)', colorbar=True, xlim=[0, 12])      
         plt.tight_layout()
 
 # Helper Functions
