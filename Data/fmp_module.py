@@ -844,17 +844,17 @@ def get_chromagrams(song_selected, song_dict, Fs_X_dict_STFT, X_dict_STFT, Fs_X_
                              title=title, ylabel='Croma', xlabel='Tempo (segundos)', colorbar=True, xlim=[0, 12])      
         plt.tight_layout()
 
-def get_chromagram(song_selected, song_dict, Fs_X_dict, X_dict, cmap='gray_r', chroma_type=0):
+def get_chromagram(song_selected, song_dict, Fs_X_dict, X_dict, cmap='gray_r', chroma_type=0, xlim=[0, 12], figsize=(3.5, 2.5)):
     '''Get specific chromagrams of the selected songs'''
     cmap = 'gray_r'
     chromas = {0:'STFT', 1:'CQT', 2:'IIR'}
     for s in song_selected:
         fig, ax = plt.subplots(1, 1, gridspec_kw={'width_ratios': [1], 
-                                                  'height_ratios': [2]}, figsize=(3.5, 2.5))
+                                                  'height_ratios': [2]}, figsize=figsize)
         title = '%s, %s (%0.1f Hz)' % (song_dict[s][0], chromas[chroma_type], Fs_X_dict[s])
         libfmp.b.plot_chromagram(X_dict[s], Fs=Fs_X_dict[s], ax=[ax],  
                                  chroma_yticks=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], clim=[0, 1], cmap=cmap,
-                                 title=title, ylabel='Croma', xlabel='Tempo (segundos)', colorbar=True, xlim=[0, 12])      
+                                 title=title, ylabel='Croma', xlabel='Tempo (segundos)', colorbar=True, xlim=xlim)      
         plt.tight_layout()
 
 # Helper Functions
