@@ -1,0 +1,2 @@
+tetrads_comeu.csv
+tetrads_deixa_sangrar.csv

@@ -21,6 +21,31 @@ import libfmp.c7
 
 LEGEND_COLORS = ['r', 'b', 'c', 'g', 'm', 'y', 'k']
 
+CHORDAL_TYPES = {'Z': 'M7',
+                 'Y': '7',
+                 'X': '(b5)7',
+                 'W': '(#5)7',
+                 'V': '',
+                 'z': 'm7',
+                 'y': 'ø',
+                 'x': '°7',
+                 'w': 'm(M7)',
+                 'v': 'm'}
+
+FUNDAMENTALS = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+TEMPLATES_IN_C = {'M7': [0, 4, 7, 11],
+                  '7': [0, 4, 7, 10],
+                  '(b5)7': [0, 4, 6, 10],
+                  '(#5)7': [0, 4, 8, 10],
+                  '': [0, 4, 7],
+                  'm7': [0, 3, 7, 10],
+                  'ø': [0, 3, 6, 10],
+                  '°7': [0, 3, 6, 9],
+                  'm(M7)': [0, 3, 7, 11],
+                  'm': [0, 3, 7]}
+
+
 def compute_chromagram_from_filename(fn_wav, Fs=22050, N=4096, H=2048, gamma=None, version='STFT', norm='2'):
     """Compute chromagram for WAV file specified by filename
 
@@ -91,7 +116,7 @@ def plot_chromagram_annotation(ax, X, Fs_X, ann, color_ann, x_dur, cmap='gray_r'
 
 # Template-Based Pattern Matching
 
-def get_chord_labels(ext_minor='m', nonchord=False):
+def get_chord_labels(ext_minor='m', nonchord=False, m_type=0):
     """Generate chord labels for major and minor triads (and possibly nonchord label)
 
     Notebook: C5/C5S2_ChordRec_Templates.ipynb
@@ -103,37 +128,83 @@ def get_chord_labels(ext_minor='m', nonchord=False):
     Returns:
         chord_labels (list): List of chord labels
     """
+    exts = list(TEMPLATES_IN_C.keys())
     chroma_labels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
     chord_labels_maj = chroma_labels
     chord_labels_min = [s + ext_minor for s in chroma_labels]
     chord_labels = chord_labels_maj + chord_labels_min
+    if(m_type == 1):
+        chord_labels_M7 = [s + exts[0] for s in chroma_labels]
+        chord_labels_7 = [s + exts[1] for s in chroma_labels]
+        chord_labels_hdim = [s + exts[2] for s in chroma_labels]
+        chord_labels_aug = [s + exts[3] for s in chroma_labels]
+        chord_labels_m7 = [s + exts[5] for s in chroma_labels]
+        chord_labels_dim = [s + exts[6] for s in chroma_labels]
+        chord_labels_dim7 = [s + exts[7] for s in chroma_labels]
+        chord_labels_mM7 = [s + exts[8] for s in chroma_labels]
+        chord_labels += chord_labels_M7 + chord_labels_7 + chord_labels_hdim + chord_labels_aug + chord_labels_m7 + chord_labels_dim + chord_labels_dim7 + chord_labels_mM7
     if nonchord is True:
         chord_labels = chord_labels + ['N']
     return chord_labels
 
-def generate_chord_templates(nonchord=False):
+# def generate_chord_templates(nonchord=False):
+#     """Generate chord templates of major and minor triads (and possibly nonchord)
+# 
+#     Notebook: C5/C5S2_ChordRec_Templates.ipynb
+# 
+#     Args:
+#         nonchord (bool): If "True" then add nonchord template (Default value = False)
+# 
+#     Returns:
+#         chord_templates (np.ndarray): Matrix containing chord_templates as columns
+#     """
+#     template_cmaj = np.array([1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]).T
+#     template_cmin = np.array([1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]).T
+#     num_chord = 24
+#     if nonchord:
+#         num_chord = 25
+#     chord_templates = np.ones((12, num_chord))
+#     for shift in range(12):
+#         chord_templates[:, shift] = np.roll(template_cmaj, shift)
+#         chord_templates[:, shift+12] = np.roll(template_cmin, shift)
+#     return chord_templates
+
+def generate_chord_templates(m_len=0, nonchord=False):
     """Generate chord templates of major and minor triads (and possibly nonchord)
 
     Notebook: C5/C5S2_ChordRec_Templates.ipynb
 
     Args:
         nonchord (bool): If "True" then add nonchord template (Default value = False)
-
+        m_len (int): If 0 then 24x24, elif 1 then 120x120
     Returns:
         chord_templates (np.ndarray): Matrix containing chord_templates as columns
     """
-    template_cmaj = np.array([1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]).T
-    template_cmin = np.array([1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]).T
-    num_chord = 24
-    if nonchord:
-        num_chord = 25
-    chord_templates = np.ones((12, num_chord))
-    for shift in range(12):
-        chord_templates[:, shift] = np.roll(template_cmaj, shift)
-        chord_templates[:, shift+12] = np.roll(template_cmin, shift)
+    if(m_len == 0):
+        template_cmaj = np.array([1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0]).T
+        template_cmin = np.array([1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0]).T
+        num_chord = 24
+        if nonchord:
+            num_chord = 25
+
+        chord_templates = np.ones((12, num_chord))
+        for shift in range(12):
+            chord_templates[:, shift] = np.roll(template_cmaj, shift)
+            chord_templates[:, shift+12] = np.roll(template_cmin, shift)
+    elif(m_len == 1):
+        acordes = []
+        for fundamental in FUNDAMENTALS:
+            for tipo in CHORDAL_TYPES:
+                acordes.append(fundamental + CHORDAL_TYPES[tipo])
+        templates = pd.DataFrame(0, index = range(12), columns = acordes)
+        for fundamental in FUNDAMENTALS:
+            for tipo in TEMPLATES_IN_C:
+                for nota in TEMPLATES_IN_C[tipo]:
+                    templates[fundamental + tipo][(FUNDAMENTALS.index(fundamental) + nota)%12] = 1
+        chord_templates = templates.to_numpy()
     return chord_templates
 
-def chord_recognition_template(X, norm_sim='1', nonchord=False):
+def chord_recognition_template(X, norm_sim='1', matrix_len=0, nonchord=False):
     """Conducts template-based chord recognition
     with major and minor triads (and possibly nonchord)
 
@@ -143,12 +214,13 @@ def chord_recognition_template(X, norm_sim='1', nonchord=False):
         X (np.ndarray): Chromagram
         norm_sim (str): Specifies norm used for normalizing chord similarity matrix (Default value = '1')
         nonchord (bool): If "True" then add nonchord template (Default value = False)
+        matrix_len (int): If 0 then 24x24, elif 1 then 120x120
 
     Returns:
         chord_sim (np.ndarray): Chord similarity matrix
         chord_max (np.ndarray): Binarized chord similarity matrix only containing maximizing chord
     """
-    chord_templates = generate_chord_templates(nonchord=nonchord)
+    chord_templates = generate_chord_templates(matrix_len, nonchord=nonchord)
     X_norm = libfmp.c3.normalize_feature_sequence(X, norm='2')
     chord_templates_norm = libfmp.c3.normalize_feature_sequence(chord_templates, norm='2')
     chord_sim = np.matmul(chord_templates_norm.T, X_norm)
@@ -270,6 +342,7 @@ def compute_eval_measures(I_ref, I_est):
         num_FN (int): Number of false negatives
         num_FP (int): Number of false positives
     """
+    # print(f'I_ref = {I_ref.shape}\nI_est={I_est.shape}')
     assert I_ref.shape == I_est.shape, "Dimension of input matrices must agree"
     TP = np.sum(np.logical_and(I_ref, I_est))
     FP = np.sum(I_est > 0, axis=None) - TP
@@ -637,12 +710,12 @@ def viterbi_log_likelihood(A, C, B_O):
 
 # Feature Extraction
 
-def compute_X_dict(song_dict, song_selected, version='STFT', details=True):
+def compute_X_dict(song_dict, song_selected, version='STFT', details=True, m_type=0):
     X_dict = {}
     Fs_X_dict = {}
     ann_dict = {}
     x_dur_dict = {}
-    chord_labels = libfmp.c5.get_chord_labels(ext_minor='m', nonchord=False)
+    chord_labels = get_chord_labels(ext_minor='m', nonchord=False, m_type=m_type)
     for s in song_selected:
         if details is True:
             print('Processing: ', song_dict[s][0])
@@ -663,7 +736,7 @@ def compute_X_dict(song_dict, song_selected, version='STFT', details=True):
         Fs_X_dict[s] = Fs_X
         x_dur_dict[s] = x_dur
         N_X = X.shape[1]
-        ann_dict[s] = libfmp.c5.convert_chord_ann_matrix(fn_ann, chord_labels, Fs=Fs_X, N=N_X, last=False)
+        ann_dict[s] = convert_chord_ann_matrix(fn_ann, chord_labels, Fs=Fs_X, N=N_X, last=False)
     return X_dict, Fs_X_dict, ann_dict, x_dur_dict, chord_labels
 
 # Chord Recognition Procedures
@@ -693,18 +766,21 @@ def chord_recognition_all(X, ann_matrix, A=None, p=0.15, filt_len=None, filt_typ
             X, Fs_X = libfmp.c3.smooth_downsample_feature_sequence(X, Fs=1, filt_len=filt_len, down_sampling=1)
         if filt_type == 'median':
             X, Fs_X = libfmp.c3.median_downsample_feature_sequence(X, Fs=1, filt_len=filt_len, down_sampling=1)
-    # Template-based chord recogntion
-    chord_sim, chord_Tem = libfmp.c5.chord_recognition_template(X, norm_sim='1')
-    result_Tem = libfmp.c5.compute_eval_measures(ann_matrix, chord_Tem)
-    # HMM-based chord recogntion
-    if A is None: A = libfmp.c5.uniform_transition_matrix(p=p)
+    if A is None: A = uniform_transition_matrix(p=p)
     else: 
         A = edit_diagonal(A, p)
         A = A.to_numpy()
-    C = 1 / 24 * np.ones((1, 24))
+    size_A = len(A)
+    # Template-based chord recogntion
+    if(size_A == 120): chord_sim, chord_Tem = chord_recognition_template(X, norm_sim='1', matrix_len=1)
+    else: chord_sim, chord_Tem = chord_recognition_template(X, norm_sim='1')
+    result_Tem = compute_eval_measures(ann_matrix, chord_Tem)
+    # HMM-based chord recogntion
+    
+    C = 1 / size_A * np.ones((1, size_A))
     B_O = chord_sim
     chord_HMM, _, _, _ = libfmp.c5.viterbi_log_likelihood(A, C, B_O)
-    result_HMM = libfmp.c5.compute_eval_measures(ann_matrix, chord_HMM)
+    result_HMM = compute_eval_measures(ann_matrix, chord_HMM)
     return result_Tem, result_HMM, chord_Tem, chord_HMM, chord_sim
     
 def plot_chord_recognition_result(ann_matrix, result, chord_matrix, chord_labels,

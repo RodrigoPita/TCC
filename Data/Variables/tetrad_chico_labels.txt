@@ -1,0 +1,2 @@
+tetrads_ate_segunda_feira.csv
+tetrads_juca.csv
