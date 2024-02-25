@@ -1,4 +1,4 @@
-# TCC - Motando um Reconhecedor de Acordes
+# TCC - Identificação de Acordes via Modelos de Markov Ocultos Musicalmente Informados
 
 _Aluno: Rodrigo Pita_ <br>
 _Orientador: Hugo Tremonte_
