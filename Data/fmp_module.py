@@ -899,6 +899,48 @@ def plot_hmm_likelihood_matrix(fn_wav, fn_ann, color_ann, chord_labels, version=
     ax[2,1].axis('off')
     plt.tight_layout()
 
+def plot_hmm_likelihood_matrix_alone(fn_wav, fn_ann, color_ann, version='STFT'):
+    """
+    Helper function to plot the observation sequence and the likelihood matrix of a given .wav file.
+    
+    Args:
+        fn_wav (str): Filenname of WAV
+        fn_ann (str): Filename of segment-based chord annotation
+        chord_labels (list): List of chord labels
+        color_ann: Color for annotations
+        version (str): Technique used for front-end decomposition ('STFT', 'IIR', 'CQT') (Default value = 'STFT')
+    """
+    N = 4096
+    H = 1024
+    X, Fs_X, x, Fs, x_dur = libfmp.c5.compute_chromagram_from_filename(fn_wav, N=N, H=H, gamma=0.1, version=version)
+
+    N_X = X.shape[1]
+
+    chord_labels = libfmp.c5.get_chord_labels(nonchord=False)
+
+    # Chord recogntion
+    chord_sim, chord_max = libfmp.c5.chord_recognition_template(X, norm_sim='1')
+
+    # Annotations
+    ann_matrix, ann_frame, ann_seg_frame, ann_seg_ind, ann_seg_sec = \
+        libfmp.c5.convert_chord_ann_matrix(fn_ann, chord_labels, Fs=Fs_X, N=N_X, last=True)
+    #P, R, F, TP, FP, FN = libfmp.c5.compute_eval_measures(ann_matrix, chord_max)
+
+    cmap = libfmp.b.compressed_gray_cmap(alpha=1, reverse=False)
+    fig, ax = plt.subplots(1, 2, gridspec_kw={'width_ratios': [1, 0.03], 
+                                              'height_ratios': [3]}, figsize=(9, 5))
+                                              
+
+    libfmp.b.plot_matrix(chord_sim, ax=[ax[1, 0], ax[1, 1]], Fs=Fs_X, clim=[0, np.max(chord_sim)],
+                         title='Likelihood matrix (time–chord representation)',
+                         ylabel='Chord', xlabel='')
+    ax[1, 0].set_yticks(np.arange(len(chord_labels)))
+    ax[1, 0].set_yticklabels(chord_labels)
+    libfmp.b.plot_segments_overlay(ann_seg_sec, ax=ax[1, 0], time_max=x_dur,
+                                   print_labels=False, colors=color_ann, alpha=0.1)
+
+    plt.tight_layout()
+
 def get_chromagrams(song_selected, song_dict, Fs_X_dict_STFT, X_dict_STFT, Fs_X_dict_CQT, X_dict_CQT, Fs_X_dict_IIR, X_dict_IIR, cmap='gray_r'):
     '''Get chromagrams of the selected songs'''
     for s in song_selected:
