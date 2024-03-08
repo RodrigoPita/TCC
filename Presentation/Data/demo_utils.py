@@ -1109,4 +1109,21 @@ def plot_uniform_results(X_dict_STFT, ann_dict_STFT, X_dict_CQT, ann_dict_CQT, X
         output = chord_recognition_all(X_dict_IIR[s], ann_dict_IIR[s][0])
         _, result_HMM, _, chord_HMM, _ = output
         title = 'Música: %s [IIR; HMM]' % song_dict[s][0]
-        plot_chord_recognition_result(ann_dict_IIR[s][0], result_HMM, chord_HMM, chord_labels, title=title)  
+        plot_chord_recognition_result(ann_dict_IIR[s][0], result_HMM, chord_HMM, chord_labels, title=title)
+
+def plot_mpb_results(X_dict_STFT, ann_dict_STFT, X_dict_CQT, ann_dict_CQT, X_dict_IIR, ann_dict_IIR, song_selected, song_dict, chord_labels, p, m, df):
+    s = song_selected[0]
+    output = chord_recognition_all(X_dict_STFT[s], ann_dict_STFT[s][0], df, p=p)
+    _, result_HMM, _, chord_HMM, _ = output
+    title = 'Música: %s [STFT; HMM]' % song_dict[s][0]
+    plot_chord_recognition_result(ann_dict_STFT[s][0], result_HMM, chord_HMM, chord_labels, title=title, t_matrix=m, p=p)
+    
+    output = chord_recognition_all(X_dict_CQT[s], ann_dict_CQT[s][0], df, p=p)
+    _, result_HMM, _, chord_HMM, _ = output
+    title = 'Música: %s [CQT; HMM]' % song_dict[s][0]
+    plot_chord_recognition_result(ann_dict_CQT[s][0], result_HMM, chord_HMM, chord_labels, title=title, t_matrix=m, p=p)
+    
+    output = chord_recognition_all(X_dict_IIR[s], ann_dict_IIR[s][0], df, p=p)
+    _, result_HMM, _, chord_HMM, _ = output
+    title = 'Música: %s [IIR; HMM]' % song_dict[s][0]
+    plot_chord_recognition_result(ann_dict_IIR[s][0], result_HMM, chord_HMM, chord_labels, title=title, t_matrix=m, p=p)
